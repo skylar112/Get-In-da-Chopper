@@ -6,12 +6,16 @@ $(document).ready(function () {
     var searchValue = $("#city-input").val();
     searchWeather(searchValue);
     $("#city-input").empty();
+    addHistory(searchValue);
 
-
-
-
-
+  });
+  $(".history").on("click","li", function(){
+    searchWeather($(this).text())
   })
+  function addHistory(text) {
+    var li = $("<li>").addClass("list-group-item").text(text);
+    $(".history").append(li)
+  }
 
    function searchWeather(value) {
     $.ajax({
@@ -19,20 +23,20 @@ $(document).ready(function () {
       url: `https://api.openweathermap.org/data/2.5/weather?q=${value}&appid=f744fde82d0b52476b93f7d394a00850&units=imperial`,
       dataType: "json",
     }).then(function (response) {
+      $("#today").empty();
       var card = $("<p>").text("Current Weather");
       var body = $("<div>").addClass("card-body");
-      var title = $("<div>").addClass("card-title").text(response.name);
+      var title = $("<h2>").addClass("card-title").text(response.name);
       var temp = Math.round(response.main.temp);
-      var humidity = $("<p>").text("Humidity:");
-      var wind = $("<p>").text("Wind Speed:");
+      var humidity = $("<p>").addClass("card-text").text("Humidity: " + response.main.humidity + "%");
+      var wind = $("<p>").text("Wind Speed: " + response.wind.speed + " mph");
+      var tempDisplay = $("<p>").addClass("card-text").text("Temp: " + temp +String.fromCharCode(176))
       console.log(response);
      
-      body.append(title)
+      body.append(title, tempDisplay, wind, humidity);
       card.append(body);
       $("#today").append(card);
-      $("#today").append(card.append(temp));
-      $("#today").append(humidity.append(response.main.humidity + "%"));
-      $("#today").append(wind.append(response.wind.speed + "mph"));
+    
       
     
       getUVIndex(response.coord.lat, response.coord.lon);
@@ -40,14 +44,6 @@ $(document).ready(function () {
 
     })
   }
-
-
-// JS#67-69: we want to keep the forecast to just 5 days, (i = 1 already) splice the last 2 days off the 8 day forecast. Get the solution to Corey
-// JS#67-39: get it into card id=Forecast, in a row 5 across formation
-// Code in function in clear button to clear results
-//convert TD into usable time through moment.JS
-//localstorage for box on the left, look at day planner homework
-
 
   //Function for UV Index
   function getUVIndex(lat, lon) {
@@ -81,10 +77,20 @@ $(document).ready(function () {
       url: `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=f744fde82d0b52476b93f7d394a00850&units=imperial`,
       dataType: "json",
     }).then(function (data) {
-    
-      for (var i = 1; i < data.daily.length; i++) {
+      $("#forecast").empty();
+      //var dayArray = data.daily;
+      //var fiveDayArray = dayArray.splice(-1, 3);
+      
+        for (var i = 1; i < data.daily.length; i++) {
+        var col = $("<div>").addClass("col-lg-2");
         var card = $("<div>").addClass("card");
         var body = $("<div>").addClass("card-body"); 
+        var minTemp = $("<p>").addClass("card-text").text(data.daily[i].temp.min);
+        var maxTemp = $("<p>").addClass("card-text").text(data.daily[i].temp.max);
+        var dateTime = $("<p>").addClass("card-text").text(moment.unix(data.daily[i].dt).format("MM/DD"));
+
+        body.append(dateTime, minTemp, maxTemp);
+        $("#forecast").append(col.append(card.append(body)))
       }
       
     })
