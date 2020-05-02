@@ -9,6 +9,11 @@ font-size: 36px;
   width: 98%;
 }
 
+#card-body
+{
+  font-weight: bold;
+}
+
 
 body
 {

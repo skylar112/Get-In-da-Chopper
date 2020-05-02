@@ -5,12 +5,11 @@ $(document).ready(function () {
   $("#search-button").on("click", function () {
     var searchValue = $("#city-input").val();
     searchWeather(searchValue);
-    $("#city-input").empty();
-    addHistory(searchValue);
+    $("#city-input").val("");
 
   });
   $(".history").on("click","li", function(){
-    searchWeather($(this).text())
+    searchWeather($(this).text());
   })
   function addHistory(text) {
     var li = $("<li>").addClass("list-group-item").text(text);
@@ -23,6 +22,12 @@ $(document).ready(function () {
       url: `https://api.openweathermap.org/data/2.5/weather?q=${value}&appid=f744fde82d0b52476b93f7d394a00850&units=imperial`,
       dataType: "json",
     }).then(function (response) {
+      if(history.indexOf(value) === -1) {
+        history.push(value);
+          window.localStorage.setItem("history", JSON.stringify(value))
+          addHistory(value);
+      }
+      console.log(localStorage)
       $("#today").empty();
       var card = $("<p>").text("Current Weather");
       var body = $("<div>").addClass("card-body");
@@ -36,9 +41,7 @@ $(document).ready(function () {
       body.append(title, tempDisplay, wind, humidity);
       card.append(body);
       $("#today").append(card);
-    
-      
-    
+        
       getUVIndex(response.coord.lat, response.coord.lon);
       getForecast(response.coord.lat, response.coord.lon);
 
@@ -67,7 +70,7 @@ $(document).ready(function () {
       } else {
         btn.addClass("btn-danger");
       }
-        //
+        //Insert button for color display for UV Index
       $("#today .card-body").append(uv.append(btn));
     })
   }
@@ -78,24 +81,40 @@ $(document).ready(function () {
       dataType: "json",
     }).then(function (data) {
       $("#forecast").empty();
-      //var dayArray = data.daily;
-      //var fiveDayArray = dayArray.splice(-1, 3);
-      
-        for (var i = 1; i < data.daily.length; i++) {
+      for (var i = 1; i < 6; i++) 
+        {
+        var minTemp = Math.round(data.daily[i].temp.min);
+        var maxTemp = Math.round(data.daily[i].temp.max);
         var col = $("<div>").addClass("col-lg-2");
-        var card = $("<div>").addClass("card");
+        var card = $("<div>").addClass("card").attr("style", "margin-bottom:10px");
         var body = $("<div>").addClass("card-body"); 
-        var minTemp = $("<p>").addClass("card-text").text(data.daily[i].temp.min);
-        var maxTemp = $("<p>").addClass("card-text").text(data.daily[i].temp.max);
-        var dateTime = $("<p>").addClass("card-text").text(moment.unix(data.daily[i].dt).format("MM/DD"));
+        var minTempEl = $("<p>").addClass("card-text").text("min: " + minTemp +String.fromCharCode(176));
+        var maxTempEl = $("<p>").addClass("card-text").text("max: " + maxTemp +String.fromCharCode(176));
+        var dateTime = $("<p>").addClass("card-text").text(moment.unix(data.daily[i].dt).format("MMMM  DD"));
 
-        body.append(dateTime, minTemp, maxTemp);
-        $("#forecast").append(col.append(card.append(body)))
+        body.append(dateTime, minTempEl, maxTempEl);
+                $("#forecast").append(col.append(card.append(body)))
       }
+
+    
       
     })
+  }
+
+  var history = JSON.parse(window.localStorage.getItem("history")) || [];
+  console.log(history)
+  if(history.length > 0) {
+    searchWeather(history[history.length-1]);
+  }
+  for (var i = 0; i < history.length; i++) {
+     addHistory(history[i]);
   }
 });
 
 
-
+//Math.round min/max COMPLETE
+//local stroage
+//5 day weather forecast rather than 8 days. COMPLETED
+//insert :min/max temp into forecast cards COMPLETEd
+//Weather image into forecast and weather cards
+//clear history button
