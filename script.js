@@ -1,4 +1,7 @@
-//f744fde82d0b52476b93f7d394a00850
+//local stroage
+//Weather image into forecast and weather cards
+//clear history button
+
 
 $(document).ready(function () {
 
@@ -22,7 +25,7 @@ $(document).ready(function () {
       url: `https://api.openweathermap.org/data/2.5/weather?q=${value}&appid=f744fde82d0b52476b93f7d394a00850&units=imperial`,
       dataType: "json",
     }).then(function (response) {
-      if(history.indexOf(value) === -1) {
+      if(history.indexOf(value)) {
         history.push(value);
           window.localStorage.setItem("history", JSON.stringify(value))
           addHistory(value);
@@ -112,9 +115,3 @@ $(document).ready(function () {
 });
 
 
-//Math.round min/max COMPLETE
-//local stroage
-//5 day weather forecast rather than 8 days. COMPLETED
-//insert :min/max temp into forecast cards COMPLETEd
-//Weather image into forecast and weather cards
-//clear history button
