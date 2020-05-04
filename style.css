@@ -1,17 +1,61 @@
+html
+{
+  min-height: 100%;
+}
 .navbar-brand
 {
 font-size: 36px;
 }
 
+/*controls left text box containing search city box*/
+.col-4
+{
+  border-radius: 4px;
+}
+
+/*contains right text box containing current weather and forecasr*/
 .container
 {
   background-color: rgb(243, 246, 248);
   width: 98%;
+  border-radius: 4px;
 }
 
-#card-body
+/*controls "Search for a city" text*/
+.search-header
 {
+  color: blue;
+  font-size: 25px;
   font-weight: bold;
+}
+
+/*controls current weather info*/
+p
+{
+  color: blue;
+  font-size: 25px;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+/*Temp and Humidity*/
+.card-text
+{
+  color: rgb(125, 125, 192);
+}
+
+.text
+{
+  color: rgb(125, 125, 192);
+}
+
+/*Current weather and forecast cards*/
+.card-body
+{
+ color: rgb(125, 125, 192);
+ font-weight: bold;
+ border-style: outset;
+ border-radius: 2px;
 }
 
 
@@ -20,4 +64,8 @@ body
   background-image: url('https://i.imgur.com/54amLz5.gif');
   opacity: 80%;
   background-size: cover;
-}   
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+ }   
+
